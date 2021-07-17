@@ -1,24 +1,53 @@
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import Home from "./containers/Home";
+import Data from "./containers/Data";
+import Performance from "./containers/Performance";
+import { Profiler, useState } from "react";
 
 function App() {
+  const [performanceData, setPerformanceData] = useState(null);
+  const handleOnRender = (
+    id,
+    phase,
+    actualDuration,
+    baseDuration,
+    startTime,
+    commitTime,
+    interactions
+  ) => {
+    console.log(
+      actualDuration,
+      baseDuration,
+      startTime,
+      commitTime,
+      )
+    if (!performanceData)
+      setPerformanceData({
+        id,
+        phase,
+        actualDuration,
+        baseDuration,
+        startTime,
+        commitTime,
+        interactions,
+      });
+  };
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <Switch>
+        <Route exact path="/">
+          <Home />
+        </Route>
+        <Route path="/data">
+          <Profiler id="data-page" onRender={handleOnRender}>
+            <Data />
+          </Profiler>
+        </Route>
+        <Route path="/performance">
+          <Performance data={performanceData} />
+        </Route>
+      </Switch>
+    </Router>
   );
 }
 
